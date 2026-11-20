@@ -44,6 +44,10 @@ next-env.d.ts
 .venv*
 tests/rls/.pytest_cache*
 tests/rls/__pycache__*
+tests/.venv*
 
 #vscode
 .vscode*
+
+# supabase
+/supabase*
