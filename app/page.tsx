@@ -1,6 +1,7 @@
-import { Suspense } from "react";
+import { Children, Suspense } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { logout } from "./login/action";
 export default function Home() {
   return (
     <main className="mx-auto w-full max-w-2xl p-8">
@@ -10,13 +11,22 @@ export default function Home() {
           With cacheComponents on, that has to sit inside a Suspense boundary:
           the heading above is prerendered, and this part streams in. */}
       <Suspense fallback={<p className="mt-6 text-zinc-500">Loading…</p>}>
-        <CurrentUser />
+        <CurrentUser >
+          <form action={logout} className="mt-6 space-y-4">
+            <button 
+              type="submit"
+              className="rounded bg-zinc-900 px-3 py-1 text-sm text-zinc-100 hover:bg-zinc-700"
+            >
+              Sign out
+            </button>
+          </form>
+        </CurrentUser>
       </Suspense>
     </main>
   );
 }
 
-async function CurrentUser() {
+async function CurrentUser({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
 
   // The page checks for itself, not just proxy.ts. If the proxy's matcher
@@ -49,6 +59,7 @@ async function CurrentUser() {
           {clients?.map((c) => <li key={c.id}>{c.name}</li>)}
         </ul>
       </div>
+      {children}
     </section>
   );
 }
