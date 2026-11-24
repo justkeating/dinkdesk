@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { connection } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
 /**
@@ -10,6 +11,10 @@ import { createServerClient } from "@supabase/ssr";
  * session into another user's request).
  */
 export async function createClient() {
+  // Auth checks compare the token's expiry against the current time, so they
+  // must run on the live request, never in a prerender that would freeze
+  // "now". connection() tells Next.js to wait for the real request.
+  await connection();
   const cookieStore = await cookies();
 
   return createServerClient(
